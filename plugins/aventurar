@@ -1,0 +1,51 @@
+// Cooldown de 30 minutos (en milisegundos)
+const ADVENTURE_COOLDOWN = 1800000;
+
+let handler = async (m, { conn }) => {
+    let user = global.db.data.users[m.sender];
+    let lastadventure = user.lastadventure || 0;
+
+    if (new Date() - lastadventure < ADVENTURE_COOLDOWN) {
+        let remainingTime = (lastadventure + ADVENTURE_COOLDOWN) - new Date();
+        let minutes = Math.floor((remainingTime / 1000 / 60) % 60);
+        let seconds = Math.floor((remainingTime / 1000) % 60);
+        return await conn.reply(m.chat, 
+            `*Necesitas descansar antes de otra aventura.* ⚔️\n\n` +
+            `Podrás salir de nuevo en *${minutes} minutos y ${seconds} segundos*.`,
+            m
+        );
+    }
+
+    // Resultados aleatorios de la aventura
+    const outcomes = [
+        { success: true, reward: 200, message: "¡Encontraste un tesoro legendario en una cueva oculta! Ganaste *{reward}* cristales 💎." },
+        { success: true, reward: 75, message: "Ayudaste a un mercader en apuros y te recompensó generosamente. Ganaste *{reward}* cristales 💎." },
+        { success: true, reward: 50, message: "Exploraste unas ruinas antiguas y encontraste algunas gemas. Ganaste *{reward}* cristales 💎." },
+        { success: false, reward: -30, message: "¡Una emboscada de goblins! Lograste escapar, pero perdiste *{reward}* cristales 💎 en la huida." },
+        { success: false, reward: 0, message: "Te perdiste en el bosque y volviste con las manos vacías. No ganaste ni perdiste nada." }
+    ];
+
+    const result = outcomes[Math.floor(Math.random() * outcomes.length)];
+    let finalReward = result.reward;
+
+    // Asegurarse de que el usuario no quede con cristales negativos
+    if (!result.success && (user.cristales || 0) < Math.abs(finalReward)) {
+        finalReward = -(user.cristales || 0); // Pierde solo lo que tiene
+    }
+
+    user.cristales = (user.cristales || 0) + finalReward;
+    user.lastadventure = new Date() * 1;
+
+    let message = result.message.replace('{reward}', Math.abs(finalReward));
+
+    await conn.reply(m.chat, 
+        `*Te adentras en tierras desconocidas...*\n\n` + message,
+        m
+    );
+};
+
+handler.help = ['aventurar'];
+handler.tags = ['rpg'];
+handler.command = /^(aventurar|adventure|adv)$/i;
+
+export default handler;
