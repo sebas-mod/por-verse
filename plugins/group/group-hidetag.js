@@ -1,0 +1,69 @@
+import fs from "fs";
+import path from "path";
+
+let handler = async (m, { conn, text, participants }) => {
+    let q = m.quoted || m;
+    let mime = (q.msg || q).mimetype || "";
+    let users = participants.map((p) => p.id);
+    let teks = text || q.text || "";
+    let mappedMentions = [];
+    let finalText = teks;
+
+    // Mapeo de menciones
+    if (teks) {
+        for (let p of participants) {
+            if (p.lid && teks.includes("@" + p.lid.split("@")[0])) {
+                mappedMentions.push(p.id);
+                finalText = finalText.replace("@" + p.lid.split("@")[0], "@" + p.id.split("@")[0]);
+            }
+            if (p.id && teks.includes("@" + p.id.split("@")[0])) {
+                mappedMentions.push(p.id);
+            }
+        }
+    }
+
+    let finalMentions = [...new Set([...users, ...mappedMentions])];
+    let sendOpt = { mentions: finalMentions, quoted: m };
+
+    try {
+        if (mime) {
+            let ext = mime.split("/")[1];
+            let filePath = path.join("./tmp", `${Date.now()}.${ext}`);
+            let media = await q.download();
+            fs.writeFileSync(filePath, media);
+
+            if (/image/.test(mime)) {
+                await conn.sendFile(m.chat, filePath, `imagen.${ext}`, `📸 ${finalText}`, m, false, sendOpt);
+            } else if (/video/.test(mime)) {
+                await conn.sendFile(m.chat, filePath, `video.${ext}`, `🎥 ${finalText}`, m, false, sendOpt);
+            } else if (/audio/.test(mime)) {
+                await conn.sendFile(m.chat, filePath, `audio.${ext}`, `🎵`, m, true, {
+                    ...sendOpt,
+                    mimetype: "audio/mpeg",
+                });
+            } else if (/document/.test(mime)) {
+                await conn.sendFile(m.chat, filePath, `archivo.${ext}`, `📄 ${finalText}`, m, false, {
+                    ...sendOpt,
+                    mimetype: mime,
+                });
+            }
+
+            fs.unlinkSync(filePath);
+        } else if (finalText) {
+            await conn.sendMessage(m.chat, { text: `💌 ${finalText}`, mentions: finalMentions }, { quoted: m });
+        } else {
+            m.reply("⚠️ *Envía un mensaje de texto o medio, o responde a un mensaje.*");
+        }
+    } catch (e) {
+        console.error(e);
+        m.reply("❌ *Ocurrió un error al enviar el mensaje ocultando menciones.*");
+    }
+};
+
+handler.help = ["hidetag"];
+handler.tags = ["group"];
+handler.command = /^(hidetag|ht|n|notify)$/i;
+handler.group = true;
+handler.admin = true;
+
+export default handler;
