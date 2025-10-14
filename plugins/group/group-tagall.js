@@ -18,6 +18,6 @@ handler.help = ["tagall"];
 handler.tags = ["group"];
 handler.command = /^(tagall|todos)$/i;
 handler.group = true;
-handler.owner = true;
+handler.owner = false;
 
 export default handler;
