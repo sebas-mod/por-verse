@@ -1,11 +1,11 @@
 let handler = async (m, { conn, text, participants }) => {
     // Emoji decorativo (puedes cambiarlo)
-    const emoji = "⚡";
+    const emoji = "🇺🇾";
 
     // Mensaje base
     let mensaje = text
-        ? `📝 *Mensaje de javi bot 2.0.0:*\n${text}`
-        : "🏴‍☠️ *––––––『 Invocando a todos 』––––––*";
+        ? `*Mensaje de javi bot 2.0.0:*\n${text}`
+        : " *––––––『 Invocando a todos 』––––––*";
 
     let textoFinal = `${mensaje}\n\n👥 *Miembros etiquetados:*\n`;
 
