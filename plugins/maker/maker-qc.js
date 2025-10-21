@@ -1,45 +1,44 @@
-/* Adaptado al estilo de Luffy Bot por Luis 🇺🇾 */
+// 📁 plugins/sticker/qc.js
+/* Adaptado para Luffy Bot 🇺🇾 por Sebas */
 
-import axios from 'axios'
-import { sticker } from '../lib/sticker.js'
+const axios = require("axios");
+const { sticker } = require("../lib/sticker.js");
 
-let handler = async (m, { conn, args, usedPrefix, command }) => {
-  // Obtener el texto
-  let text
+const handler = async (m, { conn, args }) => {
+  let text;
+
   if (args.length >= 1) {
-    text = args.join(' ')
+    text = args.join(" ");
   } else if (m.quoted && m.quoted.text) {
-    text = m.quoted.text
-  } else return conn.reply(m.chat, '🌸 *Te faltó el texto!*', m)
+    text = m.quoted.text;
+  } else {
+    return conn.reply(m.chat, "🌸 Te faltó el texto!", m);
+  }
 
-  if (!text) return conn.reply(m.chat, '🌸 *Te faltó el texto!*', m)
+  if (text.length > 40)
+    return conn.reply(
+      m.chat,
+      "🌸 El texto no puede tener más de 40 caracteres",
+      m
+    );
 
-  // Obtener el usuario mencionado o el autor
+  // Obtener usuario mencionado o el propio
   const who =
     (m.mentionedJid && m.mentionedJid[0]) ||
-    (m.fromMe ? conn.user.jid : m.sender)
+    (m.fromMe ? conn.user.jid : m.sender);
 
-  // Quitar la mención del texto si la hay
-  const mentionRegex = new RegExp(
-    `@${who.split('@')[0].replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&')}\\s*`,
-    'g'
-  )
-  const quoteText = text.replace(mentionRegex, '')
-
-  if (quoteText.length > 40)
-    return conn.reply(m.chat, '🌸 *El texto no puede tener más de 40 caracteres.*', m)
-
-  // Foto de perfil del usuario
   const pp =
-    (await conn.profilePictureUrl(who, 'image').catch(() => null)) ||
-    'https://telegra.ph/file/24fa902ead26340f3df2c.png'
-  const nombre = await conn.getName(who)
+    (await conn
+      .profilePictureUrl(who, "image")
+      .catch(() => "https://telegra.ph/file/24fa902ead26340f3df2c.png")) ||
+    "https://telegra.ph/file/24fa902ead26340f3df2c.png";
 
-  // Configuración para la API
-  const obj = {
-    type: 'quote',
-    format: 'png',
-    backgroundColor: '#000000',
+  const nombre = await conn.getName(who);
+
+  const body = {
+    type: "quote",
+    format: "png",
+    backgroundColor: "#000000",
     width: 512,
     height: 768,
     scale: 2,
@@ -47,43 +46,36 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
       {
         entities: [],
         avatar: true,
-        from: {
-          id: 1,
-          name: nombre,
-          photo: { url: pp },
-        },
-        text: quoteText,
+        from: { id: 1, name: nombre, photo: { url: pp } },
+        text: text,
         replyMessage: {},
       },
     ],
-  }
+  };
 
   try {
-    // Generar sticker desde la API
     const { data } = await axios.post(
-      'https://bot.lyo.su/quote/generate',
-      obj,
-      { headers: { 'Content-Type': 'application/json' } }
-    )
+      "https://bot.lyo.su/quote/generate",
+      body,
+      { headers: { "Content-Type": "application/json" } }
+    );
 
-    const buffer = Buffer.from(data.result.image, 'base64')
-    const stiker = await sticker(buffer, false, global.packname, global.author)
+    const buffer = Buffer.from(data.result.image, "base64");
+    const stiker = await sticker(buffer, false, global.packname, global.author);
 
-    if (stiker)
-      await conn.sendFile(m.chat, stiker, 'quote.webp', '', fkontak)
-    else conn.reply(m.chat, '⚠️ No se pudo crear el sticker.', m)
+    if (stiker) {
+      await conn.sendFile(m.chat, stiker, "quote.webp", "", m);
+    } else {
+      conn.reply(m.chat, "❌ No se pudo generar el sticker", m);
+    }
   } catch (e) {
-    console.error(e)
-    conn.reply(
-      m.chat,
-      '❌ *Error al generar el sticker.*\nVerifica la conexión o intenta más tarde.',
-      m
-    )
+    console.error(e);
+    conn.reply(m.chat, "⚠️ Error al generar el sticker", m);
   }
-}
+};
 
-handler.help = ['qc']
-handler.tags = ['sticker']
-handler.command = /^qc$/i
+handler.help = ["qc"];
+handler.tags = ["sticker"];
+handler.command = ["qc"];
 
-export default handler
+module.exports = handler;
