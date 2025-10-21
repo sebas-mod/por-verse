@@ -96,7 +96,7 @@ END:VCARD`;
             },
             message: {
                 contactMessage: {
-                    displayName: "🤖 𝙈𝘼𝙓𝘽𝙊𝙏𝒊",
+                    displayName: "🤖𝐀𝐋𝐘𝐀 𝐁𝐎𝐓𝒊",
                     vcard,
                 },
             },
@@ -152,7 +152,7 @@ END:VCARD`;
             let icon = icons[i] || "⭐";
             return {
                 title: `${icon} Menu ${capitalize(v)}`,
-                description: `${icon} ${v} está disponible en max boti 🚀`,
+                description: `${icon} ${v} está disponible en alya bot 🌸`,
                 id: `${usedPrefix + command} ${v}`,
             };
         });
@@ -162,7 +162,7 @@ END:VCARD`;
                 {
                     document: { url: "https://files.catbox.moe/syug0p.jpg" },
                     mimetype: "application/pdf",
-                    fileName: `☠️ ${global.config.watermark}`,
+                    fileName: `🌸 ${global.config.watermark}`,
                     fileLength: 0,
                     pageCount: 0,
                     caption: listCmd,
@@ -285,7 +285,7 @@ END:VCARD`;
             {
                 document: { url: "https://files.catbox.moe/syug0p.jpg" },
                 mimetype: "application/pdf",
-                fileName: `☠️ ${global.config.watermark}.pdf`,
+                fileName: `🌸 ${global.config.watermark}.pdf`,
                 fileLength: 0,
                 pageCount: 0,
                 caption: text.trim(),
