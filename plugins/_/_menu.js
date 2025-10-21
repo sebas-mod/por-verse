@@ -160,7 +160,7 @@ END:VCARD`;
             return await conn.sendMessage(
                 m.chat,
                 {
-                    document: { url: "https://files.catbox.moe/o378un.jpg" },
+                    document: { url: "https://files.catbox.moe/syug0p.jpg" },
                     mimetype: "application/pdf",
                     fileName: `☠️ ${global.config.watermark}`,
                     fileLength: 0,
@@ -173,7 +173,7 @@ END:VCARD`;
                             title: global.config.author,
                             body: subtitle,
                             mediaType: 1,
-                            thumbnailUrl: "https://files.catbox.moe/o378un.jpg",
+                            thumbnailUrl: "https://files.catbox.moe/syug0p.jpg",
                             sourceUrl: global.config.website,
                             renderLargerThumbnail: true,
                         },
@@ -283,7 +283,7 @@ END:VCARD`;
         await conn.sendMessage(
             m.chat,
             {
-                document: { url: "https://files.catbox.moe/o378un.jpg" },
+                document: { url: "https://files.catbox.moe/syug0p.jpg" },
                 mimetype: "application/pdf",
                 fileName: `☠️ ${global.config.watermark}.pdf`,
                 fileLength: 0,
@@ -296,7 +296,7 @@ END:VCARD`;
                         title: global.config.author,
                         body: subtitle,
                         mediaType: 1,
-                        thumbnailUrl: "https://files.catbox.moe/o378un.jpg",
+                        thumbnailUrl: "https://files.catbox.moe/syug0p.jpg",
                         sourceUrl: global.config.website,
                         renderLargerThumbnail: true,
                     },
