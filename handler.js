@@ -365,7 +365,7 @@ let user = global.db.data.users[m.sender];
                                 body: global.config.watermark,
                                 mediaType: 1,
                                 thumbnailUrl:
-                                    "https://files.catbox.moe/o378un.jpg",
+                                    "https://n.uguu.se/PfcBtCcJ.jpg",
                                 renderLargerThumbnail: true,
                             },
                         },
@@ -410,7 +410,7 @@ let user = global.db.data.users[m.sender];
                 title: "🍡 ACCESO DENEGADO",
                 body: global.config.watermark,
                 mediaType: 1,
-                thumbnailUrl: "https://files.catbox.moe/o378un.jpg",
+                thumbnailUrl: "https://n.uguu.se/PfcBtCcJ.jpg",
                 renderLargerThumbnail: true,
             },
         },
