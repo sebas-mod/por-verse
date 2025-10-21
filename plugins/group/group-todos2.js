@@ -24,7 +24,7 @@ let handler = async (m, { conn, text, participants }) => {
 // Información del comando
 handler.help = ["tagall"];
 handler.tags = ["group"];
-handler.command = /^(tagall|todos2)$/i;
+handler.command = /^(tagall|todos)$/i;
 handler.group = true;
 handler.owner = false;
 
