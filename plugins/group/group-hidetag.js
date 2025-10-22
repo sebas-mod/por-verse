@@ -33,16 +33,16 @@ let handler = async (m, { conn, text, participants }) => {
             fs.writeFileSync(filePath, media);
 
             if (/image/.test(mime)) {
-                await conn.sendFile(m.chat, filePath, `imagen.${ext}`, `📸 ${finalText}`, m, false, sendOpt);
+                await conn.sendFile(m.chat, filePath, `imagen.${ext}`, finalText, m, false, sendOpt);
             } else if (/video/.test(mime)) {
-                await conn.sendFile(m.chat, filePath, `video.${ext}`, `🎥 ${finalText}`, m, false, sendOpt);
+                await conn.sendFile(m.chat, filePath, `video.${ext}`, finalText, m, false, sendOpt);
             } else if (/audio/.test(mime)) {
-                await conn.sendFile(m.chat, filePath, `audio.${ext}`, `🎵`, m, true, {
+                await conn.sendFile(m.chat, filePath, `audio.${ext}`, finalText || "", m, true, {
                     ...sendOpt,
                     mimetype: "audio/mpeg",
                 });
             } else if (/document/.test(mime)) {
-                await conn.sendFile(m.chat, filePath, `archivo.${ext}`, `📄 ${finalText}`, m, false, {
+                await conn.sendFile(m.chat, filePath, `archivo.${ext}`, finalText, m, false, {
                     ...sendOpt,
                     mimetype: mime,
                 });
@@ -50,7 +50,7 @@ let handler = async (m, { conn, text, participants }) => {
 
             fs.unlinkSync(filePath);
         } else if (finalText) {
-            await conn.sendMessage(m.chat, { text: ` ${finalText}`, mentions: finalMentions }, { quoted: m });
+            await conn.sendMessage(m.chat, { text: finalText, mentions: finalMentions }, { quoted: m });
         } else {
             m.reply("⚠️ *Envía un mensaje de texto o medio, o responde a un mensaje.*");
         }
