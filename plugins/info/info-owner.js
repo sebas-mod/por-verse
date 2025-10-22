@@ -26,9 +26,9 @@ END:VCARD`;
             contacts: { displayName: "KenisawaDev", contacts: [{ vcard }] },
             contextInfo: {
                 externalAdReply: {
-                    title: "Copyright © 2024 - 2025 KenisawaDev",
+                    title: "Copyright © 2024 - 2025 sebasmod",
                     body: "Contactá directo por WhatsApp",
-                    thumbnailUrl: "https://files.catbox.moe/njlcj8.jpg",
+                    thumbnailUrl: "https://n.uguu.se/PfcBtCcJ.jpg",
                     mediaType: 1,
                     renderLargerThumbnail: true,
                 },
@@ -38,7 +38,7 @@ END:VCARD`;
     );
 
     // Envío de los miembros del team (excluyendo el owner principal)
-    let team = global.config.owner.filter(([num]) => num !== "5493865642938");
+    let team = global.config.owner.filter(([num]) => num !== "5491166887146");
     if (team.length) {
         let vcards = team.map(([num, name]) => ({
             vcard: `BEGIN:VCARD
