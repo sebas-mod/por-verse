@@ -50,7 +50,7 @@ let handler = async (m, { conn, text, participants }) => {
 
             fs.unlinkSync(filePath);
         } else if (finalText) {
-            await conn.sendMessage(m.chat, { text: `💌 ${finalText}`, mentions: finalMentions }, { quoted: m });
+            await conn.sendMessage(m.chat, { text: ` ${finalText}`, mentions: finalMentions }, { quoted: m });
         } else {
             m.reply("⚠️ *Envía un mensaje de texto o medio, o responde a un mensaje.*");
         }
