@@ -117,7 +117,7 @@ global.dfail = (type, m, conn) => {
                         title: "🍡 ACCESO DENEGADO",
                         body: global.config.watermark,
                         mediaType: 1,
-                        thumbnailUrl: "https://files.catbox.moe/6sb6u1.jpg",
+                        thumbnailUrl: "https://n.uguu.se/PfcBtCcJ.jpg",
                         renderLargerThumbnail: true,
                     },
                 },
