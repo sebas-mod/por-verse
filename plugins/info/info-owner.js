@@ -2,21 +2,21 @@ let handler = async (m, { conn }) => {
     // vCard principal del owner
     let vcard = `BEGIN:VCARD
 VERSION:3.0
-FN:KenisawaDev
-ORG:KenisawaDev
+FN:sebas-mod
+ORG:sebas-mod
 TITLE:Developer
-EMAIL;type=INTERNET:mauroazcurra035@gmail.com
-TEL;type=CELL;waid=5493865642938:+5493865642938
+EMAIL;type=INTERNET:sebas.mod@gmail.com
+TEL;type=CELL;waid=5491166887146:+5491166887146
 ADR;type=WORK:;;Argentina;;;;
-URL;type=WORK:https://instagram.com/kenisawadevolper
-X-WA-BIZ-NAME:KenisawaDev
+URL;type=WORK:https://instagram.com/sebas-dzn
+X-WA-BIZ-NAME:sebas-mod
 X-WA-BIZ-DESCRIPTION:El desarrollador del bot
 X-WA-BIZ-HOURS:Mo-Su 00:00-23:59
 END:VCARD`;
 
     let qkontak = {
         key: { fromMe: false, participant: "0@s.whatsapp.net", remoteJid: "status@broadcast" },
-        message: { contactMessage: { displayName: "KenisawaDev", vcard } },
+        message: { contactMessage: { displayName: "sebasMod", vcard } },
     };
 
     // Envío del contacto principal
