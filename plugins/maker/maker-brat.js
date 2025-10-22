@@ -1,39 +1,38 @@
-import fs from 'fs'
-import WSF from "wa-sticker-formatter"
+/* BRAT FAST RESPON
+Cek example respon nya :
+https://cdn.yupra.my.id/yp/uqgcgxw7.mp4
+*/
+import fetch from 'node-fetch'
+import { Sticker } from 'wa-sticker-formatter'
 
-var handler = async (m, { conn, args, text, usedPrefix, command }) => {
-    let ps = text 
-        ? text 
-        : m.quoted?.text 
-        || m.quoted?.caption 
-        || m.quoted?.description 
-        || ''
-    
-    if (!ps) throw m.reply(`*• Ejemplo:* ${usedPrefix + command} [texto]`)
+let handler = async (m, { conn, args }) => {
+  const text = (args.join(" ") || m.quoted?.text || m.quoted?.caption || '').trim()
+  if (!text) return conn.sendMessage(m.chat, { text: "❌ Masukkan teks!\nContoh: .brat Hello" }, { quoted: m })
 
-    let res = `https://mxmxk-helper.hf.space/brat?text=${encodeURIComponent(ps)}`
+  await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
 
-    try {
-        async function sticker(url, packname, author, categories = [""]) {
-            const stickerMetadata = {
-                type: "full",
-                pack: packname,
-                author,
-                categories,
-            }
-            return await new WSF.Sticker(url, stickerMetadata).build()
-        }
+  try {
+    let res = await fetch(https://api.yupra.my.id/api/image/brat?text=${encodeURIComponent(text)})
+    if (!res.ok) throw new Error(HTTP ${res.status})
 
-        var stikerp = await sticker(res, "Luffy Bot 🏴‍☠️", "Luis Sebastián")
-        await conn.sendFile(m.chat, stikerp, 'brat.webp', '', m)
-    } catch (e) {
-        console.error(e)
-        await m.reply(String(e))
-    }
+    let buffer = await res.buffer()
+    let sticker = new Sticker(buffer, {
+      pack: 'Yupra',
+      author: 'Brat',
+      type: 'full',
+      quality: 80
+    })
+
+    await conn.sendMessage(m.chat, { sticker: await sticker.build() }, { quoted: m })
+    await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
+  } catch (e) {
+    await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+    await conn.sendMessage(m.chat, { text: Gagal membuat sticker: ${e.message} }, { quoted: m })
+  }
 }
 
-handler.help = ['brat']
+handler.help = ['brat <teks>']
 handler.tags = ['sticker']
-handler.command = /^(brat)$/i
+handler.command = /^brat$/i
 
 export default handler
