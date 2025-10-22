@@ -32,7 +32,7 @@ let handler = async (m, { conn, args }) => {
 }
 
 handler.help = ['brat <teks>']
-handler.tags = ['sticker']
+handler.tags = ['maker']
 handler.command = /^brat$/i
 
 export default handler
