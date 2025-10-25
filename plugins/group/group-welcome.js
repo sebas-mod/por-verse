@@ -11,6 +11,9 @@ handler.before = async function (m, { conn }) {
   const chatId = m.chat
   const chat = global.db.data.chats[chatId] || {}
 
+  // Inicializamos la opción de welcome si no existe
+  if (!("welcomeActive" in chat)) chat.welcomeActive = false
+
   // Solo procesamos eventos importantes (join/leave/desc)
   if (![21, 27, 28, 29, 30].includes(m.messageStubType)) return
 
@@ -43,7 +46,7 @@ handler.before = async function (m, { conn }) {
 
   try {
     // 📥 BIENVENIDA (messageStubType 27)
-    if (m.messageStubType === 27) {
+    if (m.messageStubType === 27 && chat.welcomeActive) { // <-- Se envía solo si welcomeActive es true
       const participant = m.messageStubParameters[0]
       const userTag = "@" + participant.split("@")[0]
 
@@ -65,7 +68,7 @@ handler.before = async function (m, { conn }) {
     }
 
     // 📤 DESPEDIDA (messageStubType 28)
-    else if (m.messageStubType === 28) {
+    else if (m.messageStubType === 28 && chat.welcomeActive) { // <-- Se aplica mismo control
       const participant = m.messageStubParameters[0]
       const userTag = "@" + participant.split("@")[0]
 
