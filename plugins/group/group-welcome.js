@@ -38,7 +38,7 @@ handler.before = async function (m, { conn }) {
   } catch {
     groupPic =
       global.db.data.settings?.welcomeImage ||
-      "https://telegra.ph/file/8b3a7d6bbcfb5efb6b8dc.jpg"
+      "https://n.uguu.se/qiUlhRsD.jpg"
   }
 
   try {
