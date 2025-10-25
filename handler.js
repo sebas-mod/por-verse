@@ -85,7 +85,7 @@ let user = global.db.data.users[m.sender];
                 if (!("mute" in chat)) chat.mute = false;
                 if (!("adminOnly" in chat)) chat.adminOnly = false;
                 if (!("detect" in chat)) chat.detect = false;
-                if (!("sWelcome" in chat)) chat.sWelcome = "false";
+                if (!("sWelcome" in chat)) chat.sWelcome = false;
                 if (!("sBye" in chat)) chat.sBye = "false";
                 if (!("sPromote" in chat)) chat.sPromote = "false";
                 if (!("sDemote" in chat)) chat.sDemote = "false";
@@ -111,7 +111,7 @@ let user = global.db.data.users[m.sender];
                     mute: false,
                     adminOnly: false,
                     detect: false,
-                    sWelcome: "false",
+                    sWelcome: false,
                     sBye: "false",
                     sPromote: "false",
                     sDemote: "false",
