@@ -3,21 +3,29 @@ import fs from "fs"
 let handler = async (m, { conn }) => {}
 
 handler.before = async function (m, { conn }) {
+  if (!m || !m.chat) return
   if (!m.isGroup) return
+
   const chatId = m.chat
   const chat = global.db.data.chats[chatId] || {}
-  const groupMetadata = await conn.groupMetadata(chatId)
-  const groupName = groupMetadata.subject
-  const desc = groupMetadata.desc || "Sin descripción disponible"
-  const totalMembers = groupMetadata.participants.length
 
-  // 🖼️ Imagen del grupo o personalizada por URL global
+  // Solo procesamos eventos de bienvenida, salida o descripción
+  if (![21, 27, 28].includes(m.messageStubType)) return
+
+  // Obtenemos metadata solo si es necesario
+  const groupMetadata = await conn.groupMetadata(chatId).catch(() => ({}))
+  const groupName = groupMetadata.subject || "Grupo"
+  const desc = groupMetadata.desc || "Sin descripción disponible"
+  const totalMembers = groupMetadata.participants?.length || 0
+
+  // 🖼️ Imagen del grupo o personalizada
   let groupPic
   try {
     groupPic = await conn.profilePictureUrl(chatId, "image")
   } catch {
-    groupPic = global.db.data.settings?.welcomeImage ||
-      "https://telegra.ph/file/8b3a7d6bbcfb5efb6b8dc.jpg" // predeterminada si no hay ninguna
+    groupPic =
+      global.db.data.settings?.welcomeImage ||
+      "https://telegra.ph/file/8b3a7d6bbcfb5efb6b8dc.jpg"
   }
 
   // 📥 BIENVENIDA
@@ -27,7 +35,7 @@ handler.before = async function (m, { conn }) {
 
     let welcomeMsg =
       chat.sWelcome ||
-      "🍓 *Alya te da la bienvenida,* {user} 💖\nDisfrutá en *{group}* ⚓\n\n{desc}"
+      "🍓 *Alya te da la bienvenida,* @user 💖\nDisfrutá en *@subject* ⚓\n\n@desc"
 
     let text = welcomeMsg
       .replace(/@user/gi, userTag)
