@@ -122,10 +122,13 @@ handler.before = async function (m, { conn }) {
         .replace(/@subject/gi, groupName)
         .replace(/@desc/gi, desc)
 
+      // Nueva estructura con subtítulo
+      let formattedText = `📝 *Descripción del Grupo:*\n─────────────────\n${text}`
+
       await delay(1000)
       await conn.sendMessage(chatId, {
         image: { url: groupPic },
-        caption: text,
+        caption: formattedText,
         mentions: [m.sender],
       })
     }
