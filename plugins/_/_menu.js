@@ -173,7 +173,7 @@ END:VCARD`;
                             title: global.config.author,
                             body: subtitle,
                             mediaType: 1,
-                            thumbnailUrl: "https://h.uguu.se/LFvfEabJ.jpg",
+                            thumbnailUrl: "https://files.catbox.moe/qd06ft.jpg",
                             sourceUrl: global.config.website,
                             renderLargerThumbnail: true,
                         },
