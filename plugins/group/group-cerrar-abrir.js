@@ -15,7 +15,7 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
   if (!isBotAdmin) return m.reply("❌ Necesito ser admin para cerrar o abrir el grupo.")
 
   let msTime = null
-  let timeStr = null
+  let durationText = null
 
   // Validar tiempo si se proporcionó
   if (args.length >= 2) {
@@ -28,17 +28,16 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
     else if (unit.startsWith("hor")) msTime = timeNum * 60 * 60 * 1000
     else return m.reply("❌ Unidad inválida. Usa segundos, minutos u horas.")
 
-    const future = new Date(Date.now() + msTime)
-    timeStr = future.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })
+    durationText = `${timeNum} ${unit}` // texto para mostrar duración
   }
 
   if (command.toLowerCase() === "cerrar") {
     await conn.groupSettingUpdate(chat, "announcement") // solo admins
     if (msTime) {
-      m.reply(`🔒 El grupo ha sido cerrado.\n⏰ Se reabrirá automáticamente a las ${timeStr}.`)
+      m.reply(`🔒 El grupo ha sido cerrado por ${durationText}.`)
       setTimeout(async () => {
         await conn.groupSettingUpdate(chat, "not_announcement")
-        conn.sendMessage(chat, { text: `🔓 El grupo se ha reabierto automáticamente a las ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}.` })
+        conn.sendMessage(chat, { text: `🔓 El grupo se ha reabierto automáticamente.` })
       }, msTime)
     } else {
       m.reply("🔒 El grupo ha sido cerrado indefinidamente. Solo los admins pueden enviar mensajes.")
@@ -47,10 +46,10 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
   } else if (command.toLowerCase() === "abrir") {
     await conn.groupSettingUpdate(chat, "not_announcement") // todos pueden enviar
     if (msTime) {
-      m.reply(`🔓 El grupo ha sido abierto.\n⏰ Se cerrará automáticamente a las ${timeStr}.`)
+      m.reply(`🔓 El grupo ha sido abierto por ${durationText}.`)
       setTimeout(async () => {
         await conn.groupSettingUpdate(chat, "announcement")
-        conn.sendMessage(chat, { text: `🔒 El grupo se ha cerrado automáticamente a las ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}.` })
+        conn.sendMessage(chat, { text: `🔒 El grupo se ha cerrado automáticamente.` })
       }, msTime)
     } else {
       m.reply("🔓 El grupo ha sido abierto indefinidamente. Todos pueden enviar mensajes.")
