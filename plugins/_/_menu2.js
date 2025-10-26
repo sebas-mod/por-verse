@@ -148,7 +148,7 @@ let handler = async (m, { conn, usedPrefix, isOwner, isMods, isPrems }) => {
     )
 
     // URL DE IMAGEN DE ALYA
-    const alyaImage = "https://h.uguu.se/LFvfEabJ.jpg" // 🌸 Puedes cambiarla si querés
+    const alyaImage = "https://files.catbox.moe/syug0p.jpg" // 🌸 Puedes cambiarla si querés
 
     // Enviar menú con imagen
     await conn.sendMessage(m.chat, {
