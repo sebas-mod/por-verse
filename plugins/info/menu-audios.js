@@ -1,7 +1,7 @@
 import fs from "fs"
 import path from "path"
 
-let handler = async (m) => {
+let handler = async (m, { conn }) => {
   const dbPath = path.join("./database/audios.json")
   if (!fs.existsSync(dbPath)) return m.reply("📂 No hay audios guardados aún.")
 
@@ -22,9 +22,17 @@ let handler = async (m) => {
   txt += `  Ejemplo: *borrar-audio saludo*\n`
   txt += `────────────────────`
 
-  m.reply(txt, null, { mentions: db.map(a => a.author) })
+  const imgPath = path.join("./database/menu.png") // reemplaza con tu imagen
+
+  await conn.sendMessage(
+    m.chat,
+    { image: { url: fs.existsSync(imgPath) ? imgPath : "https://i.ibb.co/album-placeholder.png" }, caption: txt, mentions: db.map(a => a.author) },
+    { quoted: m }
+  )
 }
-handler.help = ["menu-audios"]
+
+handler.help = ["menuaudios"]
 handler.tags = ["info"]
-handler.command = /^(menu-audios|audios)$/i
+handler.command = /^(menuaudios)$/i
+
 export default handler
