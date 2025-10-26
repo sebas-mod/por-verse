@@ -1,17 +1,23 @@
 let handler = async (m, { conn, args, usedPrefix, command }) => {
   const chat = m.chat
-  const isGroup = m.isGroup
-  if (!isGroup) return m.reply("❌ Este comando solo funciona en grupos.")
+  if (!m.isGroup) return m.reply("❌ Este comando solo funciona en grupos.")
 
-  const isAdmin = m.isGroupAdmin || false
-  const isBotAdmin = m.isBotGroupAdmin || false
+  // Obtener metadata del grupo y participantes
+  const groupMetadata = await conn.groupMetadata(chat)
+  const participants = groupMetadata.participants
+
+  // Verificar si el usuario y el bot son admin
+  const sender = m.sender
+  const isAdmin = participants.find(p => p.id === sender)?.admin
+  const isBotAdmin = participants.find(p => p.id === conn.user.jid)?.admin
+
   if (!isAdmin) return m.reply("❌ Solo los admins pueden usar este comando.")
   if (!isBotAdmin) return m.reply("❌ Necesito ser admin para cerrar o abrir el grupo.")
 
   let msTime = null
   let timeStr = null
 
-  // Verificar si se proporcionó tiempo
+  // Validar tiempo si se proporcionó
   if (args.length >= 2) {
     let timeNum = parseInt(args[0])
     let unit = args[1].toLowerCase()
@@ -27,8 +33,7 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
   }
 
   if (command.toLowerCase() === "cerrar") {
-    // Cerrar grupo
-    await conn.groupSettingUpdate(chat, "announcement")
+    await conn.groupSettingUpdate(chat, "announcement") // solo admins
     if (msTime) {
       m.reply(`🔒 El grupo ha sido cerrado.\n⏰ Se reabrirá automáticamente a las ${timeStr}.`)
       setTimeout(async () => {
@@ -40,8 +45,7 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
     }
 
   } else if (command.toLowerCase() === "abrir") {
-    // Abrir grupo
-    await conn.groupSettingUpdate(chat, "not_announcement")
+    await conn.groupSettingUpdate(chat, "not_announcement") // todos pueden enviar
     if (msTime) {
       m.reply(`🔓 El grupo ha sido abierto.\n⏰ Se cerrará automáticamente a las ${timeStr}.`)
       setTimeout(async () => {
@@ -58,7 +62,7 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
 }
 
 handler.help = ["cerrar [tiempo unidad]", "abrir [tiempo unidad]"]
-handler.tags = ["group"]
+handler.tags = ["grupo"]
 handler.command = /^(cerrar|abrir)$/i
 
 export default handler
