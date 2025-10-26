@@ -1,44 +1,76 @@
-import { sticker } from "../../lib/sticker.js";
+import axios from "axios";
+import { sticker } from "../lib/sticker.js"; // Ajustar ruta si es necesario
 
 let handler = async (m, { conn, args, usedPrefix, command }) => {
-    try {
-        let q = m.quoted ? m.quoted : m;
-        let mime = (q.msg || q).mimetype || q.mediaType || "";
-        if (!mime && !args[0]) {
-            return m.reply(
-                `🍚 *Respondé o enviá una imagen, gif o video con el comando* ${usedPrefix + command}`
-            );
-        }
+  // Obtener texto
+  let text = args.length ? args.join(" ") : m.quoted?.text;
+  if (!text) return m.reply(`🌸 Te faltó el texto!`);
+  if (text.length > 40)
+    return m.reply(`🌸 El texto no puede tener más de 40 caracteres`);
 
-        await global.loading(m, conn);
+  // Usuario mencionado o el propio
+  const who = m.mentionedJid?.[0] || (m.fromMe ? conn.user.jid : m.sender);
 
-        let file;
-        if (args[0] && isUrl(args[0])) {
-            file = await conn.getFile(args[0], true);
-        } else {
-            let media = await q.download?.();
-            if (!media) return m.reply("🍩 *No se pudo descargar el archivo!*");
-            file = await conn.getFile(media, true);
-        }
+  // Foto de perfil
+  const pp =
+    (await conn.profilePictureUrl(who, "image").catch(
+      () => "https://telegra.ph/file/24fa902ead26340f3df2c.png"
+    )) || "https://telegra.ph/file/24fa902ead26340f3df2c.png";
 
-        let buff = await sticker(file, {
-            packName: global.config.stickpack || "StickerPack",
-            authorName: global.config.stickauth || "KenisawaDev",
-        });
+  // Nombre del usuario
+  const nombre = await conn.getName(who);
 
-        await conn.sendFile(m.chat, buff, "sticker.webp", "", m, false, { asSticker: true });
-    } catch (e) {
-        console.error(e);
-        await m.reply("❌ *No se pudo crear el sticker:* " + e.message);
-    } finally {
-        await global.loading(m, conn, true);
-    }
+  // Cuerpo para la API de quote
+  const body = {
+    type: "quote",
+    format: "png",
+    backgroundColor: "#000000",
+    width: 512,
+    height: 768,
+    scale: 2,
+    messages: [
+      {
+        entities: [],
+        avatar: true,
+        from: { id: 1, name: nombre, photo: { url: pp } },
+        text: text,
+        replyMessage: {},
+      },
+    ],
+  };
+
+  try {
+    // Mostrar loading (opcional según tu bot)
+    await global.loading(m, conn);
+
+    // Llamada a la API
+    const { data } = await axios.post(
+      "https://bot.lyo.su/quote/generate",
+      body,
+      { headers: { "Content-Type": "application/json" } }
+    );
+
+    // Convertir imagen a buffer
+    const buffer = Buffer.from(data.result.image, "base64");
+
+    // Generar sticker
+    const stiker = await sticker(buffer, {
+      packName: global.config.stickpack || "StickerPack",
+      authorName: global.config.stickauth || "KenisawaDev",
+    });
+
+    // Enviar sticker
+    await conn.sendFile(m.chat, stiker, "quote.webp", "", m, false, { asSticker: true });
+  } catch (e) {
+    console.error(e);
+    m.reply("⚠️ Error al generar el sticker: " + e.message);
+  } finally {
+    await global.loading(m, conn, true); // Finalizar loading
+  }
 };
 
-handler.help = ["sticker"];
-handler.tags = ["maker"];
-handler.command = /^s(tic?ker)?(gif)?$/i;
+handler.help = ["qc"];
+handler.tags = ["sticker"];
+handler.command = /^qc$/i; // Regex compatible, también puedes usar ["qc"]
 
 export default handler;
-
-const isUrl = (text) => /^https?:\/\/.+\.(jpe?g|png|gif|mp4)$/i.test(text);
