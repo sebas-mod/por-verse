@@ -10,25 +10,38 @@ if (!fs.existsSync(dbFolder)) fs.mkdirSync(dbFolder, { recursive: true })
 // Asegurar que exista audios.json
 if (!fs.existsSync(dbPath)) fs.writeFileSync(dbPath, "[]")
 
-let handler = async (m, { command, conn }) => {
-  // Leer la base de datos
-  let db
+// Leer base de datos
+const readDB = () => {
   try {
-    db = JSON.parse(fs.readFileSync(dbPath))
+    return JSON.parse(fs.readFileSync(dbPath))
   } catch {
-    db = []
-    fs.writeFileSync(dbPath, "[]") // Reinicia el JSON si está corrupto
+    fs.writeFileSync(dbPath, "[]") // Reinicia JSON si está corrupto
+    return []
   }
+}
+
+// Generar comandos dinámicamente desde audios.json
+const getCommands = () => {
+  const db = readDB()
+  return db.map(a => a.name.toLowerCase())
+}
+
+// Solo crear el regex si hay audios guardados
+const commands = getCommands()
+const commandRegex = commands.length > 0 ? new RegExp(`^(${commands.join("|")})$`, "i") : /^$/i
+
+let handler = async (m, { command, conn }) => {
+  const db = readDB()
+  if (db.length === 0) return m.reply("📂 No hay audios guardados aún.")
 
   // Buscar audio por nombre
   const audio = db.find(a => a.name.toLowerCase() === command.toLowerCase())
   if (!audio) return m.reply(`❌ No se encontró un audio llamado *${command}*`)
 
   // Construir ruta absoluta del archivo
-  let audioPath = path.isAbsolute(audio.path) ? audio.path : path.join(process.cwd(), audio.path)
-
+  const audioPath = path.isAbsolute(audio.path) ? audio.path : path.join(process.cwd(), audio.path)
   if (!fs.existsSync(audioPath)) {
-    return m.reply(`⚠️ El archivo del audio *${audio.name}* no existe en la ruta:\n${audioPath}`)
+    return m.reply(`⚠️ El archivo del audio *${audio.name}* ya no existe en la ruta:\n${audioPath}`)
   }
 
   // Avisar que se va a reproducir
@@ -43,17 +56,6 @@ let handler = async (m, { command, conn }) => {
 }
 
 handler.tags = ["info"]
-
-// Generar comandos dinámicamente desde audios.json
-const getCommands = () => {
-  try {
-    const db = JSON.parse(fs.readFileSync(dbPath))
-    return db.map(a => a.name.toLowerCase())
-  } catch {
-    return []
-  }
-}
-
-handler.command = new RegExp(`^(${getCommands().join("|")})$`, "i")
+handler.command = commandRegex
 
 export default handler
