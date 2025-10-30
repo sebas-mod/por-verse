@@ -112,7 +112,7 @@ let user = global.db.data.users[m.sender];
                     mute: false,
                     adminOnly: false,
                     detect: false,
-                    sWelcome: false,
+                    sWelcome: "",
                     welcome: false,
                     sBye: "",
                     sPromote: "",
