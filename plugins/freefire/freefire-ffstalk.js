@@ -112,6 +112,6 @@ const handler = async (m, { conn, text }) => {
 };
 
 handler.help = ['ffstalk *<id de cuenta>*']
-handler.tags = ['stalk']
+handler.tags = ['ff']
 handler.command = ['ffstalk', 'freefirestalk'];
 export default handler;
