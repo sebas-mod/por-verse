@@ -87,8 +87,8 @@ let user = global.db.data.users[m.sender];
                 if (!("detect" in chat)) chat.detect = false;
                 if (!("sWelcome" in chat)) chat.sWelcome = "";
                 if (!("sBye" in chat)) chat.sBye = "";
-                if (!("sPromote" in chat)) chat.sPromote = "";
-                if (!("sDemote" in chat)) chat.sDemote = "";
+                if (!("sPromote" in chat)) chat.sPromote = "false";
+                if (!("sDemote" in chat)) chat.sDemote = "false";
                 if (!("welcome" in chat)) chat.welcome = false;
                 if (!("otakuNews" in chat)) chat.otakuNews = false;
                 if (!("otakuNow" in chat)) chat.otakuNow = "";
@@ -115,8 +115,8 @@ let user = global.db.data.users[m.sender];
                     sWelcome: "",
                     welcome: false,
                     sBye: "",
-                    sPromote: "",
-                    sDemote: "",
+                    sPromote: "false",
+                    sDemote: "false",
                     otakuNews: false,
                     otakuNow: "",
                     antidelete: false,
