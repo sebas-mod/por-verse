@@ -104,7 +104,7 @@ ${iconosA.map(icono => `${icono} • `).join('\n')}
 ${iconosB.map(icono => `${icono} • `).join('\n')}
 
 *ᡣ𐭩 Organiza:* ${conn.getName(m.sender)}
-> © Տһᥲძᨣᥕ Ɓᨣƚ Uᥣ𝗍rᥲ`.trim();
+> © 𝘼𝙇𝙔𝘼 𝘽𝙊𝙏`.trim();
 
     try {
         await conn.sendMessage(m.chat, { text: message }, { quoted: m });
