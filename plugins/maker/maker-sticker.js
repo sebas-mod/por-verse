@@ -1,76 +1,55 @@
-import axios from "axios";
-import { sticker } from "../lib/sticker.js"; // Ajustar ruta si es necesario
+import { sticker } from '../lib/sticker.js'
+//import uploadFile from '../lib/uploadFile.js'
+//import uploadImage from '../lib/uploadImage.js'
+//import { webp2png } from '../lib/webp2mp4.js'
 
 let handler = async (m, { conn, args, usedPrefix, command }) => {
-  // Obtener texto
-  let text = args.length ? args.join(" ") : m.quoted?.text;
-  if (!text) return m.reply(`🌸 Te faltó el texto!`);
-  if (text.length > 40)
-    return m.reply(`🌸 El texto no puede tener más de 40 caracteres`);
 
-  // Usuario mencionado o el propio
-  const who = m.mentionedJid?.[0] || (m.fromMe ? conn.user.jid : m.sender);
+let stiker = false
+try {
+let q = m.quoted ? m.quoted : m
+let mime = (q.msg || q).mimetype || q.mediaType || ''
+if (/webp|image|video/g.test(mime)) {
+if (/video/g.test(mime)) if ((q.msg || q).seconds > 10) return m.reply(`《✧》¡El video no puede durar mas de 10 segundos!`)
+let img = await q.download?.()
 
-  // Foto de perfil
-  const pp =
-    (await conn.profilePictureUrl(who, "image").catch(
-      () => "https://telegra.ph/file/24fa902ead26340f3df2c.png"
-    )) || "https://telegra.ph/file/24fa902ead26340f3df2c.png";
+if (!img) return conn.reply(m.chat, `《✧》Por favor, envia una imagen o video para hacer un sticker`, m, rcanal)
 
-  // Nombre del usuario
-  const nombre = await conn.getName(who);
+let out
+try {
+stiker = await sticker(img, false, global.sticker2, global.sticker1)
+} catch (e) {
+console.error(e)
+} finally {
+if (!stiker) {
+if (/webp/g.test(mime)) out = await webp2png(img)
+else if (/image/g.test(mime)) out = await uploadImage(img)
+else if (/video/g.test(mime)) out = await uploadFile(img)
+if (typeof out !== 'string') out = await uploadImage(img)
+stiker = await sticker(false, out, global.sticker2, global.sticker1)
+}}
+} else if (args[0]) {
+if (isUrl(args[0])) stiker = await sticker(false, args[0], global.sticker2, global.sticker1)
 
-  // Cuerpo para la API de quote
-  const body = {
-    type: "quote",
-    format: "png",
-    backgroundColor: "#000000",
-    width: 512,
-    height: 768,
-    scale: 2,
-    messages: [
-      {
-        entities: [],
-        avatar: true,
-        from: { id: 1, name: nombre, photo: { url: pp } },
-        text: text,
-        replyMessage: {},
-      },
-    ],
-  };
+else return m.reply(`《✧》El Link Es Incorrecto`)
 
-  try {
-    // Mostrar loading (opcional según tu bot)
-    await global.loading(m, conn);
+}
+} catch (e) {
+console.error(e)
+if (!stiker) stiker = e
+} finally {
+if (stiker) conn.sendFile(m.chat, stiker, 'sticker.webp', '',m, true, { contextInfo: { 'forwardingScore': 200, 'isForwarded': false, externalAdReply:{ showAdAttribution: false, title: packname, body: botname, mediaType: 2, sourceUrl: redes, thumbnail: icons}}}, { quoted: m })
 
-    // Llamada a la API
-    const { data } = await axios.post(
-      "https://bot.lyo.su/quote/generate",
-      body,
-      { headers: { "Content-Type": "application/json" } }
-    );
+else return conn.reply(m.chat, '《✧》Por favor, envia una imagen o video para hacer un sticker', m, rcanal)
 
-    // Convertir imagen a buffer
-    const buffer = Buffer.from(data.result.image, "base64");
 
-    // Generar sticker
-    const stiker = await sticker(buffer, {
-      packName: global.config.stickpack || "StickerPack",
-      authorName: global.config.stickauth || "KenisawaDev",
-    });
+}}
+handler.help = ['stiker *<img>*', 'sticker *<url>*']
+handler.tags = ['sticker']
+handler.group = false;
+handler.command = ['s', 'sticker', 'stiker']
 
-    // Enviar sticker
-    await conn.sendFile(m.chat, stiker, "quote.webp", "", m, false, { asSticker: true });
-  } catch (e) {
-    console.error(e);
-    m.reply("⚠️ Error al generar el sticker: " + e.message);
-  } finally {
-    await global.loading(m, conn, true); // Finalizar loading
-  }
-};
+export default handler
 
-handler.help = ["qc"];
-handler.tags = ["sticker"];
-handler.command = /^qc$/i; // Regex compatible, también puedes usar ["qc"]
-
-export default handler;
+const isUrl = (text) => {
+return text.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)(jpe?g|gif|png)/, 'gi'))}
