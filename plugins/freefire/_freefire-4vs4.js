@@ -121,26 +121,33 @@ ${p.color}━━━━━━━━━━━━━━━━━━━${p.color}
 `.trim();
 }
 
-// Reacción automática (añadir o quitar)
+// REACCIONES ✅ FUNCIONAL EN POR-VERSE
 handler.before = async (m, { conn }) => {
-  if (![28, 29].includes(m.messageStubType)) return; // 28 = añadir reacción, 29 = quitar reacción
-  const reactMsgId = m.messageStubParameters?.[1];
+  const reaction = m?.message?.reactionMessage;
+  if (!reaction) return;
+
+  const msgReacted = reaction.key.id;
+  const emoji = reaction.text; 
+
   const sender = m.sender;
   const name = global.db.data.users[sender]?.name || (await conn.getName(sender));
 
-  const partida = Object.values(partidas).find((p) => p.msgId === reactMsgId);
+  const partida = Object.values(partidas).find((p) => p.msgId === msgReacted);
   if (!partida) return;
 
-  if (m.messageStubType === 28) {
-    // Añadir reacción
-    if (partida.jugadores.includes(name) || partida.suplentes.includes(name)) return;
-    if (partida.jugadores.length < 4) partida.jugadores.push(name);
-    else if (partida.suplentes.length < 2) partida.suplentes.push(name);
-    else return conn.sendMessage(partida.chat, { text: "✅ Lista llena, suerte en el VS!" });
-  } else if (m.messageStubType === 29) {
-    // Quitar reacción
-    partida.jugadores = partida.jugadores.filter((x) => x !== name);
-    partida.suplentes = partida.suplentes.filter((x) => x !== name);
+  if (emoji) {
+    if (!partida.jugadores.includes(name) && !partida.suplentes.includes(name)) {
+      if (partida.jugadores.length < 4) {
+        partida.jugadores.push(name);
+      } else if (partida.suplentes.length < 2) {
+        partida.suplentes.push(name);
+      } else {
+        return conn.sendMessage(partida.chat, { text: "✅ Lista llena, suerte en el VS!" });
+      }
+    }
+  } else {
+    partida.jugadores = partida.jugadores.filter(x => x !== name);
+    partida.suplentes = partida.suplentes.filter(x => x !== name);
   }
 
   const titulo =
@@ -150,10 +157,12 @@ handler.before = async (m, { conn }) => {
       ? "🔥 LISTA VS MASC 🔥"
       : "⚡ LISTA VS MIXTO ⚡";
 
-  const actualizado = generarMensaje(partida, titulo);
+  const newMsg = generarMensaje(partida, titulo);
 
-  // Actualiza el mensaje original
-  await conn.editMessage(partida.chat, partida.msgId, { text: actualizado });
+  await conn.sendMessage(partida.chat, {
+    text: newMsg,
+    edit: partida.msgId
+  });
 };
 
 handler.help = ["vs <hora> <am/pm> <país> <modalidad> <tipo>"];
