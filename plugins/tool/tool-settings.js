@@ -3,7 +3,7 @@ let handler = async (m, { conn, isOwner, isAdmin, args, usedPrefix, command }) =
     let bot = global.db.data.settings[conn.user.jid] || {};
 
     let features = [
-        { key: "welcome", scope: "chat", name: "🎉 Bienvenida Automática" },
+        { key: "welcome", scope: "chat", name: "🎉 Bienvenida" },
         { key: "adminOnly", scope: "chat", name: "👑 Solo Admins" },
         { key: "detect", scope: "chat", name: "🔔 Detección" },
         { key: "otakuNews", scope: "chat", name: "📰 Noticias Otaku" },
