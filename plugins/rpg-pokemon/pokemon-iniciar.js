@@ -1,44 +1,58 @@
 import fs from 'fs'
 
-const folder = './database'          // 📂 Carpeta base
+const folder = './database'
 const path = `${folder}/usuarios.json`
 
-// 🛠️ Crear carpeta si no existe
+// 🛠️ Crear carpeta y archivo si no existen
 if (!fs.existsSync(folder)) fs.mkdirSync(folder, { recursive: true })
+if (!fs.existsSync(path)) fs.writeFileSync(path, '{}')
 
 let handler = async (m, { conn }) => {
-  if (!fs.existsSync(path)) fs.writeFileSync(path, '{}')
-
   let usuarios = JSON.parse(fs.readFileSync(path))
-  if (usuarios[m.sender]) return m.reply('🌟 Ya tenés perfil creado.')
 
-  // 📸 Guardar imagen si la manda o responde
-  let mediaUrl = ''
-  if (m.quoted && m.quoted.mimetype?.includes('image')) {
-    let media = await m.quoted.download()
-    let fileName = `${folder}/img-${m.sender}.jpg`
-    fs.writeFileSync(fileName, media)
-    mediaUrl = fileName
-  } else if (m.mimetype && m.mimetype.includes('image')) {
-    let media = await m.download()
-    let fileName = `${folder}/img-${m.sender}.jpg`
-    fs.writeFileSync(fileName, media)
-    mediaUrl = fileName
-  }
+  if (usuarios[m.sender]) return m.reply(`🌟 Ya tenés un perfil creado, ${usuarios[m.sender].nombre}.\n¡Explorá el mundo Pokémon y entrená para ser el mejor!`)
 
+  // 🎮 Crear nuevo perfil
   usuarios[m.sender] = {
     nombre: m.pushName,
     monedas: 1000,
-    pokeballs: 3,
+    pokeballs: 5,
+    pokedex: true,
+    nivel: 1,
     equipo: [],
-    imagen: mediaUrl || '',
+    inicialElegido: false
   }
 
   fs.writeFileSync(path, JSON.stringify(usuarios, null, 2))
 
-  let msg = `🎮 Perfil creado exitosamente, ${m.pushName}!\n`
-  msg += mediaUrl ? '📸 Se guardó tu imagen de perfil Pokémon.' : '✨ No subiste una imagen.'
-  m.reply(msg)
+  // 🧢 Mensaje introductorio del Profesor
+  let mensaje = `
+👋 ¡Hola ${m.pushName}!
+Soy el Profesor Oak. Bienvenido al mundo Pokémon.
+
+Aquí podrás capturar, entrenar y luchar con tus Pokémon para convertirte en un Maestro Pokémon.  
+
+Antes de comenzar tu aventura, necesitás elegir tu primer compañero:
+
+🔥 Charmander
+🌊 Squirtle
+🌱 Bulbasaur
+
+Usá:
+» *.elegir <nombre>*  para seleccionar tu Pokémon inicial.
+
+Ejemplo:
+*.elegir charmander*
+
+🎒 También te entrego:
+- 5 Pokéballs
+- 1000 monedas
+- Tu Pokédex
+
+🌍 ¡Atrapa, entrena, evoluciona y enfrenta a otros entrenadores!
+`
+
+  await m.reply(mensaje)
 }
 
 handler.help = ['iniciar']
