@@ -60,7 +60,7 @@ let handler = async (m, { conn, usedPrefix, command, isOwner, isMods, isPrems, a
                 group: "👥️ Menú de Grupos",
                 info: "📖 Menú de Información",
                 internet: "💌 Menú de Internet",
-                juegos: "menu juegos",
+                juegos: "🎮menu juegos",
                 rpg: "⛏️ Menú Rpg",
                 maker: "👑 Menú de Creadores",
                 owner: "😎 Menú del Dueño",
@@ -71,6 +71,7 @@ let handler = async (m, { conn, usedPrefix, command, isOwner, isMods, isPrems, a
         if (teks == "group") tags = { group: "👥️ Menú de Grupos" };
         if (teks == "info") tags = { info: "📖 Menú de Información" };
         if (teks == "internet") tags = { internet: "🌐 Menú de Internet" };
+        if (teks == "rpg") tags = { juego: "🎮 Menú juegos" };
         if (teks == "rpg") tags = { rpg: "⛏️ Menú Rpg" };
         if (teks == "maker") tags = { maker: "👑 Menú de Creadores" };
         if (teks == "owner") tags = { owner: "😎 Menú del Dueño" };
