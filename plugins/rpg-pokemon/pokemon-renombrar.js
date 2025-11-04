@@ -1,20 +1,23 @@
 import fs from 'fs'
-import { loadUsers, saveUsers } from './utils.js'
-
+const path = './plugins/pokemon/data/usuarios.json'
 
 let handler = async (m, { args, usedPrefix, command }) => {
-const users = loadUsers()
-const user = users[m.sender]
-if(!user) return m.reply(`No tenés perfil. Usa ${usedPrefix}iniciar`)
-if(!user.equipo || user.equipo.length===0) return m.reply('No tenés Pokémon.')
-const idx = parseInt(args[0]) - 1
-if(isNaN(idx) || idx < 0 || idx >= user.equipo.length) return m.reply('Posición inválida')
-const nuevo = args.slice(1).join(' ')
-if(!nuevo) return m.reply(`Usa: ${usedPrefix}${command} <posición> <nuevo nombre>`)
-user.equipo[idx].nombre = nuevo
-saveUsers(users)
-m.reply(`✅ Pokémon renombrado a ${nuevo}`)
+  let usuarios = JSON.parse(fs.readFileSync(path))
+  let user = usuarios[m.sender]
+  if (!user) return m.reply(`⚠️ Usá ${usedPrefix}iniciar primero.`)
+  if (user.equipo.length === 0) return m.reply('❌ No tenés Pokémon.')
+
+  let index = parseInt(args[0]) - 1
+  let nuevoNombre = args.slice(1).join(' ')
+  if (isNaN(index) || index < 0 || index >= user.equipo.length) return m.reply('❌ Posición inválida.')
+  if (!nuevoNombre) return m.reply(`💡 Usa: *${usedPrefix}${command} <posición> <nuevo nombre>*`)
+
+  user.equipo[index].nombre = nuevoNombre
+  fs.writeFileSync(path, JSON.stringify(usuarios, null, 2))
+  m.reply(`✅ Tu Pokémon ahora se llama *${nuevoNombre}*.`)
 }
-handler.tags = ['rpg']
+
+handler.help = ['renombrar <posición> <nombre>']
+handler.tags = ['rpg', 'pokemon']
 handler.command = /^renombrar$/i
 export default handler
