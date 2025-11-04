@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-const dataDir = path.resolve('./plugins/pokemon/data')
+const dataDir = path.resolve('./plugins/rpg-pokemon/database')
 const usuariosFile = path.join(dataDir, 'usuarios.json')
 const pokemonFile = path.join(dataDir, 'pokemon.json')
 
