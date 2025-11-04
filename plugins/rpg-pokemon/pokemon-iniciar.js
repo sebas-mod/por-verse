@@ -8,5 +8,5 @@ saveUsers(users)
 m.reply(`✅ Perfil creado / revisado. Tenés ${user.monedas} monedas y ${user.pokeballs} Pokéballs.`)
 }
 handler.command = /^(iniciar|start|registro)$/i
-$1handler.tags = ['rpg']
+handler.tags = ['rpg']
 export default handler
