@@ -1,6 +1,6 @@
 import fs from 'fs'
 
-const dir = './database/pokemon'
+const dir = './database/pokemon.json'
 const path = `${dir}/usuarios.json`
 
 // 🛠️ Crear carpeta si no existe
