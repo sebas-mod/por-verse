@@ -1,6 +1,28 @@
-{
-"001": { "id":"001","nombre":"Bulbasaur","tipo":["Planta","Veneno"],"atk":49,"def":49,"hp":45,"exp_base":64},
-"004": { "id":"004","nombre":"Charmander","tipo":["Fuego"],"atk":52,"def":43,"hp":39,"exp_base":62},
-"007": { "id":"007","nombre":"Squirtle","tipo":["Agua"],"atk":48,"def":65,"hp":44,"exp_base":63},
-"025": { "id":"025","nombre":"Pikachu","tipo":["Eléctrico"],"atk":55,"def":40,"hp":35,"exp_base":112}
+import fs from 'fs'
+import fetch from 'node-fetch'
+
+const file = './database/pokemon.json'
+
+async function actualizarPokemons() {
+  let res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151') // primera generación
+  let data = await res.json()
+  let lista = {}
+
+  for (let p of data.results) {
+    let info = await fetch(p.url).then(r => r.json())
+    lista[info.name] = {
+      id: info.id,
+      nombre: info.name.charAt(0).toUpperCase() + info.name.slice(1),
+      tipo: info.types.map(t => t.type.name),
+      nivel: 5,
+      ataques: info.moves.slice(0, 4).map(a => a.move.name),
+      imagen: info.sprites.front_default
+    }
+    console.log(`✅ Guardado ${info.name}`)
+  }
+
+  fs.writeFileSync(file, JSON.stringify(lista, null, 2))
+  console.log('🗂️ Pokémon guardados en database/pokemon.json')
 }
+
+actualizarPokemons()
