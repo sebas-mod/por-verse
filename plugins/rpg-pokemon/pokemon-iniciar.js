@@ -1,12 +1,23 @@
-import { loadUsers, saveUsers, ensureUser } from './utils.js'
+import fs from 'fs'
+const path = './plugins/pokemon/data/usuarios.json'
 
+let handler = async (m) => {
+  if (!fs.existsSync(path)) fs.writeFileSync(path, '{}')
+  let usuarios = JSON.parse(fs.readFileSync(path))
+  if (usuarios[m.sender]) return m.reply('🌟 Ya tenés perfil creado.')
 
-let handler = async (m, { conn }) => {
-const users = loadUsers()
-const user = ensureUser(users, m.sender, m.pushName || m.sender)
-saveUsers(users)
-m.reply(`✅ Perfil creado / revisado. Tenés ${user.monedas} monedas y ${user.pokeballs} Pokéballs.`)
+  usuarios[m.sender] = {
+    nombre: m.pushName,
+    monedas: 1000,
+    pokeballs: 3,
+    equipo: []
+  }
+
+  fs.writeFileSync(path, JSON.stringify(usuarios, null, 2))
+  m.reply('🎮 Perfil creado. Usá .capturar para encontrar Pokémon.')
 }
-handler.command = /^(iniciar|start|registro)$/i
-handler.tags = ['rpg']
+
+handler.help = ['iniciar']
+handler.tags = ['rpg', 'pokemon']
+handler.command = /^iniciar$/i
 export default handler
