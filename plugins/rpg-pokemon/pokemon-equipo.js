@@ -1,16 +1,18 @@
-import { loadUsers } from './utils.js'
+import fs from 'fs'
+const path = './plugins/pokemon/data/usuarios.json'
 
+let handler = async (m) => {
+  let usuarios = JSON.parse(fs.readFileSync(path))
+  let user = usuarios[m.sender]
+  if (!user) return m.reply('⚠️ Usá .iniciar primero.')
+  if (user.equipo.length === 0) return m.reply('❌ No tenés Pokémon en tu equipo.')
 
-let handler = async (m, { conn }) => {
-const users = loadUsers()
-const user = users[m.sender]
-if(!user) return m.reply('No tenés perfil. Usa .iniciar')
-if(!user.equipo || user.equipo.length===0) return m.reply('No tenés Pokémon. Usa .capturar')
-let txt = 'Tu equipo:\n'
-user.equipo.forEach((p,i)=>{
-txt += `${i+1}. ${p.nombre} (${p.original}) Lv.${p.nivel} HP:${p.hp}/${p.hp_max} EXP:${p.exp}\n`
-})
-m.reply(txt)
+  let msg = '🎒 *Tu equipo Pokémon:*\n'
+  user.equipo.forEach((p, i) => msg += `\n${i + 1}. ${p.nombre} (Lv.${p.nivel}) ❤️${p.vida}`)
+  m.reply(msg)
 }
-handler.command = /^(equipo|team)$/i
+
+handler.help = ['equipo']
+handler.tags = ['rpg', 'pokemon']
+handler.command = /^equipo$/i
 export default handler
