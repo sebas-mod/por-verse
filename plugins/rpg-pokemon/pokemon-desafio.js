@@ -1,14 +1,8 @@
 import fs from 'fs'
-
-const folder = './database'
-const path = `${folder}/usuarios.json`
-const pokedb = './database/pokemon.json'
-
-if (!fs.existsSync(folder)) fs.mkdirSync(folder, { recursive: true })
-if (!fs.existsSync(path)) fs.writeFileSync(path, '{}')
+import { pathUsuarios, pathPokemons } from './rpgConfig.js'  // Importamos la config global
 
 let handler = async (m, { conn, args }) => {
-let usuarios = JSON.parse(fs.readFileSync(path))
+let usuarios = JSON.parse(fs.readFileSync(pathUsuarios))
 let user = usuarios[m.sender]
 if (!user) return m.reply('❌ Primero debés crear un perfil con *.iniciar*')
 
@@ -22,7 +16,7 @@ if (user.lastChallenge === hoy) return m.reply('⚠️ Ya reclamaste tu desafío
 
 ```
 // Elegir Pokémon aleatorio
-let pokemons = JSON.parse(fs.readFileSync(pokedb))
+let pokemons = JSON.parse(fs.readFileSync(pathPokemons))
 let keys = Object.keys(pokemons)
 let randomKey = keys[Math.floor(Math.random() * keys.length)]
 let pokemon = pokemons[randomKey]
@@ -32,7 +26,7 @@ user.challengePokemon = pokemon.nombre.toLowerCase()
 user.challengeAttempts = 0
 user.lastChallenge = hoy
 
-fs.writeFileSync(path, JSON.stringify(usuarios, null, 2))
+fs.writeFileSync(pathUsuarios, JSON.stringify(usuarios, null, 2))
 
 // Pistas según nivel
 let pistas = [`Tipo: ${pokemon.tipo.join(', ')}`, `Número en la Pokédex: ${pokemon.id}`]
@@ -75,14 +69,14 @@ if (respuesta === user.challengePokemon) {
   user.exp = (user.exp || 0) + expGanada
 
   // Capturar Pokémon automáticamente
-  let pokemonsDB = JSON.parse(fs.readFileSync(pokedb))
+  let pokemonsDB = JSON.parse(fs.readFileSync(pathPokemons))
   let capturado = pokemonsDB[Object.keys(pokemonsDB).find(k => pokemonsDB[k].nombre.toLowerCase() === respuesta)]
   user.equipo.push(capturado)
 
   delete user.challengePokemon
   delete user.challengeAttempts
 
-  fs.writeFileSync(path, JSON.stringify(usuarios, null, 2))
+  fs.writeFileSync(pathUsuarios, JSON.stringify(usuarios, null, 2))
   return m.reply(`
 ```
 
@@ -94,10 +88,10 @@ if (respuesta === user.challengePokemon) {
       if (user.challengeAttempts >= 3) {
         delete user.challengePokemon
         delete user.challengeAttempts
-        fs.writeFileSync(path, JSON.stringify(usuarios, null, 2))
+        fs.writeFileSync(pathUsuarios, JSON.stringify(usuarios, null, 2))
         return m.reply('❌ ¡Incorrecto! Se acabaron tus intentos para hoy. Vuelve mañana para otro desafío.')
       } else {
-        fs.writeFileSync(path, JSON.stringify(usuarios, null, 2))
+        fs.writeFileSync(pathUsuarios, JSON.stringify(usuarios, null, 2))
         return m.reply(`❌ ¡Incorrecto! Intentos restantes: ${3 - user.challengeAttempts}`)
 }
 }
