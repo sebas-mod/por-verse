@@ -1,0 +1,6 @@
+{
+"001": { "id":"001","nombre":"Bulbasaur","tipo":["Planta","Veneno"],"atk":49,"def":49,"hp":45,"exp_base":64},
+"004": { "id":"004","nombre":"Charmander","tipo":["Fuego"],"atk":52,"def":43,"hp":39,"exp_base":62},
+"007": { "id":"007","nombre":"Squirtle","tipo":["Agua"],"atk":48,"def":65,"hp":44,"exp_base":63},
+"025": { "id":"025","nombre":"Pikachu","tipo":["Eléctrico"],"atk":55,"def":40,"hp":35,"exp_base":112}
+}
