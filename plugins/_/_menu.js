@@ -44,11 +44,13 @@ let handler = async (m, { conn, usedPrefix, command, isOwner, isMods, isPrems, a
             "group",
             "info",
             "internet",
+            "juegos",
             "rpg",
             "maker",
             "owner",
             "server",
             "tools",
+            
         ];
         if (!arrayMenu.includes(teks)) teks = "404";
         if (teks == "all")
@@ -58,6 +60,7 @@ let handler = async (m, { conn, usedPrefix, command, isOwner, isMods, isPrems, a
                 group: "👥️ Menú de Grupos",
                 info: "📖 Menú de Información",
                 internet: "💌 Menú de Internet",
+                juegos: "menu juegos",
                 rpg: "⛏️ Menú Rpg",
                 maker: "👑 Menú de Creadores",
                 owner: "😎 Menú del Dueño",
