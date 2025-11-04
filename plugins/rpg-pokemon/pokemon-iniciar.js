@@ -1,13 +1,14 @@
 import fs from 'fs'
+import { pathUsuarios } from './rpgConfig.js'  // Importamos la config global
 
-const folder = './database'
-const path = `${folder}/usuarios.json`
-
-if (!fs.existsSync(folder)) fs.mkdirSync(folder, { recursive: true })
-if (!fs.existsSync(path)) fs.writeFileSync(path, '{}')
+// 🛠️ Crear base si no existe
+import path from 'path'
+const folderDB = path.dirname(pathUsuarios)
+if (!fs.existsSync(folderDB)) fs.mkdirSync(folderDB, { recursive: true })
+if (!fs.existsSync(pathUsuarios)) fs.writeFileSync(pathUsuarios, '{}')
 
 let handler = async (m, { conn }) => {
-let usuarios = JSON.parse(fs.readFileSync(path))
+let usuarios = JSON.parse(fs.readFileSync(pathUsuarios))
 
 if (usuarios[m.sender]) return m.reply(`🌟 Ya tenés un perfil creado, ${usuarios[m.sender].nombre}.\n¡Explorá el mundo Pokémon y entrená para ser el mejor!`)
 
@@ -18,10 +19,12 @@ pokeballs: 5,
 pokedex: true,
 nivel: 1,
 equipo: [],
-inicialElegido: false
+inicialElegido: false,
+exp: 0,
+medallas: []
 }
 
-fs.writeFileSync(path, JSON.stringify(usuarios, null, 2))
+fs.writeFileSync(pathUsuarios, JSON.stringify(usuarios, null, 2))
 
 let mensaje = `
 👋 ¡Hola ${m.pushName}!
