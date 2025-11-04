@@ -15,5 +15,6 @@ user.equipo[idx].nombre = nuevo
 saveUsers(users)
 m.reply(`✅ Pokémon renombrado a ${nuevo}`)
 }
+handler.tags = ['rpg']
 handler.command = /^renombrar$/i
 export default handler
