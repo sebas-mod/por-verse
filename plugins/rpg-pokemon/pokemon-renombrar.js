@@ -1,5 +1,5 @@
 import fs from 'fs'
-const path = './plugins/pokemon/data/usuarios.json'
+const path = './plugins/rpg-pokemon/database/usuarios.json'
 
 let handler = async (m, { args, usedPrefix, command }) => {
   let usuarios = JSON.parse(fs.readFileSync(path))
