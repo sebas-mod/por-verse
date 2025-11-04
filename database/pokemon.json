@@ -4,25 +4,34 @@ import fetch from 'node-fetch'
 const file = './database/pokemon.json'
 
 async function actualizarPokemons() {
-  let res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151') // primera generación
-  let data = await res.json()
-  let lista = {}
+  try {
+    console.log('🔍 Obteniendo lista de Pokémon...')
+    const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1008')
+    const data = await res.json()
+    const lista = {}
 
-  for (let p of data.results) {
-    let info = await fetch(p.url).then(r => r.json())
-    lista[info.name] = {
-      id: info.id,
-      nombre: info.name.charAt(0).toUpperCase() + info.name.slice(1),
-      tipo: info.types.map(t => t.type.name),
-      nivel: 5,
-      ataques: info.moves.slice(0, 4).map(a => a.move.name),
-      imagen: info.sprites.front_default
+    for (const p of data.results) {
+      try {
+        const info = await fetch(p.url).then(r => r.json())
+        lista[info.name] = {
+          id: info.id,
+          nombre: info.name.charAt(0).toUpperCase() + info.name.slice(1),
+          tipo: info.types.map(t => t.type.name),
+          nivel: 5,
+          ataques: info.moves.slice(0, 4).map(a => a.move.name),
+          imagen: info.sprites.front_default
+        }
+        console.log(`✅ Guardado ${info.name}`)
+      } catch (err) {
+        console.log(`⚠️ Error al obtener datos de ${p.name}: ${err.message}`)
+      }
     }
-    console.log(`✅ Guardado ${info.name}`)
-  }
 
-  fs.writeFileSync(file, JSON.stringify(lista, null, 2))
-  console.log('🗂️ Pokémon guardados en database/pokemon.json')
+    fs.writeFileSync(file, JSON.stringify(lista, null, 2))
+    console.log(`🗂️ Se guardaron ${Object.keys(lista).length} Pokémon en ${file}`)
+  } catch (err) {
+    console.error('❌ Error general al actualizar Pokémon:', err)
+  }
 }
 
 actualizarPokemons()
