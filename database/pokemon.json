@@ -1,37 +1,78 @@
-import fs from 'fs'
-import fetch from 'node-fetch'
+{
+  "002": { "id": "002", "nombre": "Ivysaur", "generacion": 1, "tipo": ["Planta", "Veneno"] },
+  "003": { "id": "003", "nombre": "Venusaur", "generacion": 1, "tipo": ["Planta", "Veneno"] },
+  "004": { "id": "004", "nombre": "Charmander", "generacion": 1, "tipo": ["Fuego"] },
+  "005": { "id": "005", "nombre": "Charmeleon", "generacion": 1, "tipo": ["Fuego"] },
+  "006": { "id": "006", "nombre": "Charizard", "generacion": 1, "tipo": ["Fuego", "Volador"] },
+  "007": { "id": "007", "nombre": "Squirtle", "generacion": 1, "tipo": ["Agua"] },
+  "008": { "id": "008", "nombre": "Wartortle", "generacion": 1, "tipo": ["Agua"] },
+  "009": { "id": "009", "nombre": "Blastoise", "generacion": 1, "tipo": ["Agua"] },
+  "010": { "id": "010", "nombre": "Caterpie", "generacion": 1, "tipo": ["Bicho"] },
+  "011": { "id": "011", "nombre": "Metapod", "generacion": 1, "tipo": ["Bicho"] },
 
-const file = './database/pokemon.json'
+  "152": { "id": "152", "nombre": "Chikorita", "generacion": 2, "tipo": ["Planta"] },
+  "153": { "id": "153", "nombre": "Bayleef", "generacion": 2, "tipo": ["Planta"] },
+  "154": { "id": "154", "nombre": "Meganium", "generacion": 2, "tipo": ["Planta"] },
+  "155": { "id": "155", "nombre": "Cyndaquil", "generacion": 2, "tipo": ["Fuego"] },
+  "156": { "id": "156", "nombre": "Quilava", "generacion": 2, "tipo": ["Fuego"] },
+  "157": { "id": "157", "nombre": "Typhlosion", "generacion": 2, "tipo": ["Fuego"] },
+  "158": { "id": "158", "nombre": "Totodile", "generacion": 2, "tipo": ["Agua"] },
+  "159": { "id": "159", "nombre": "Croconaw", "generacion": 2, "tipo": ["Agua"] },
+  "160": { "id": "160", "nombre": "Feraligatr", "generacion": 2, "tipo": ["Agua"] },
+  "161": { "id": "161", "nombre": "Sentret", "generacion": 2, "tipo": ["Normal"] },
 
-async function actualizarPokemons() {
-  try {
-    console.log('🔍 Obteniendo lista de Pokémon...')
-    const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1008')
-    const data = await res.json()
-    const lista = {}
+  "252": { "id": "252", "nombre": "Treecko", "generacion": 3, "tipo": ["Planta"] },
+  "253": { "id": "253", "nombre": "Grovyle", "generacion": 3, "tipo": ["Planta"] },
+  "254": { "id": "254", "nombre": "Sceptile", "generacion": 3, "tipo": ["Planta"] },
+  "255": { "id": "255", "nombre": "Torchic", "generacion": 3, "tipo": ["Fuego"] },
+  "256": { "id": "256", "nombre": "Combusken", "generacion": 3, "tipo": ["Fuego", "Lucha"] },
+  "257": { "id": "257", "nombre": "Blaziken", "generacion": 3, "tipo": ["Fuego", "Lucha"] },
+  "258": { "id": "258", "nombre": "Mudkip", "generacion": 3, "tipo": ["Agua"] },
+  "259": { "id": "259", "nombre": "Marshtomp", "generacion": 3, "tipo": ["Agua", "Tierra"] },
+  "260": { "id": "260", "nombre": "Swampert", "generacion": 3, "tipo": ["Agua", "Tierra"] },
+  "261": { "id": "261", "nombre": "Poochyena", "generacion": 3, "tipo": ["Siniestro"] },
 
-    for (const p of data.results) {
-      try {
-        const info = await fetch(p.url).then(r => r.json())
-        lista[info.name] = {
-          id: info.id,
-          nombre: info.name.charAt(0).toUpperCase() + info.name.slice(1),
-          tipo: info.types.map(t => t.type.name),
-          nivel: 5,
-          ataques: info.moves.slice(0, 4).map(a => a.move.name),
-          imagen: info.sprites.front_default
-        }
-        console.log(`✅ Guardado ${info.name}`)
-      } catch (err) {
-        console.log(`⚠️ Error al obtener datos de ${p.name}: ${err.message}`)
-      }
-    }
+  "387": { "id": "387", "nombre": "Turtwig", "generacion": 4, "tipo": ["Planta"] },
+  "388": { "id": "388", "nombre": "Grotle", "generacion": 4, "tipo": ["Planta"] },
+  "389": { "id": "389", "nombre": "Torterra", "generacion": 4, "tipo": ["Planta", "Tierra"] },
+  "390": { "id": "390", "nombre": "Chimchar", "generacion": 4, "tipo": ["Fuego"] },
+  "391": { "id": "391", "nombre": "Monferno", "generacion": 4, "tipo": ["Fuego", "Lucha"] },
+  "392": { "id": "392", "nombre": "Infernape", "generacion": 4, "tipo": ["Fuego", "Lucha"] },
+  "393": { "id": "393", "nombre": "Piplup", "generacion": 4, "tipo": ["Agua"] },
+  "394": { "id": "394", "nombre": "Prinplup", "generacion": 4, "tipo": ["Agua"] },
+  "395": { "id": "395", "nombre": "Empoleon", "generacion": 4, "tipo": ["Agua", "Acero"] },
+  "396": { "id": "396", "nombre": "Starly", "generacion": 4, "tipo": ["Normal", "Volador"] },
 
-    fs.writeFileSync(file, JSON.stringify(lista, null, 2))
-    console.log(`🗂️ Se guardaron ${Object.keys(lista).length} Pokémon en ${file}`)
-  } catch (err) {
-    console.error('❌ Error general al actualizar Pokémon:', err)
-  }
+  "494": { "id": "494", "nombre": "Victini", "generacion": 5, "tipo": ["Psíquico", "Fuego"] },
+  "495": { "id": "495", "nombre": "Snivy", "generacion": 5, "tipo": ["Planta"] },
+  "496": { "id": "496", "nombre": "Servine", "generacion": 5, "tipo": ["Planta"] },
+  "497": { "id": "497", "nombre": "Serperior", "generacion": 5, "tipo": ["Planta"] },
+  "498": { "id": "498", "nombre": "Tepig", "generacion": 5, "tipo": ["Fuego"] },
+  "499": { "id": "499", "nombre": "Pignite", "generacion": 5, "tipo": ["Fuego", "Lucha"] },
+  "500": { "id": "500", "nombre": "Emboar", "generacion": 5, "tipo": ["Fuego", "Lucha"] },
+  "501": { "id": "501", "nombre": "Oshawott", "generacion": 5, "tipo": ["Agua"] },
+  "502": { "id": "502", "nombre": "Dewott", "generacion": 5, "tipo": ["Agua"] },
+  "503": { "id": "503", "nombre": "Samurott", "generacion": 5, "tipo": ["Agua"] },
+
+  "650": { "id": "650", "nombre": "Chespin", "generacion": 6, "tipo": ["Planta"] },
+  "651": { "id": "651", "nombre": "Quilladin", "generacion": 6, "tipo": ["Planta"] },
+  "652": { "id": "652", "nombre": "Chesnaught", "generacion": 6, "tipo": ["Planta", "Lucha"] },
+  "653": { "id": "653", "nombre": "Fennekin", "generacion": 6, "tipo": ["Fuego"] },
+  "654": { "id": "654", "nombre": "Braixen", "generacion": 6, "tipo": ["Fuego"] },
+  "655": { "id": "655", "nombre": "Delphox", "generacion": 6, "tipo": ["Fuego", "Psíquico"] },
+  "656": { "id": "656", "nombre": "Froakie", "generacion": 6, "tipo": ["Agua"] },
+  "657": { "id": "657", "nombre": "Frogadier", "generacion": 6, "tipo": ["Agua"] },
+  "658": { "id": "658", "nombre": "Greninja", "generacion": 6, "tipo": ["Agua", "Siniestro"] },
+  "659": { "id": "659", "nombre": "Bunnelby", "generacion": 6, "tipo": ["Normal"] },
+
+  "722": { "id": "722", "nombre": "Rowlet", "generacion": 7, "tipo": ["Planta", "Volador"] },
+  "723": { "id": "723", "nombre": "Dartrix", "generacion": 7, "tipo": ["Planta", "Volador"] },
+  "724": { "id": "724", "nombre": "Decidueye", "generacion": 7, "tipo": ["Planta", "Fantasma"] },
+  "725": { "id": "725", "nombre": "Litten", "generacion": 7, "tipo": ["Fuego"] },
+  "726": { "id": "726", "nombre": "Torracat", "generacion": 7, "tipo": ["Fuego"] },
+  "727": { "id": "727", "nombre": "Incineroar", "generacion": 7, "tipo": ["Fuego", "Lucha"] },
+  "728": { "id": "728", "nombre": "Popplio", "generacion": 7, "tipo": ["Agua"] },
+  "729": { "id": "729", "nombre": "Brionne", "generacion": 7, "tipo": ["Agua"] },
+  "730": { "id": "730", "nombre": "Primarina", "generacion": 7, "tipo": ["Agua", "Hada"] },
+  "731": { "id": "731", "nombre": "Pikipek", "generacion": 7, "tipo": ["Normal", "Volador"] }
 }
-
-actualizarPokemons()
