@@ -1,15 +1,10 @@
 import fs from 'fs'
-
-const folder = './database'
-const path = `${folder}/usuarios.json`
-
-if (!fs.existsSync(folder)) fs.mkdirSync(folder, { recursive: true })
-if (!fs.existsSync(path)) fs.writeFileSync(path, '{}')
+import { pathUsuarios } from './rpgConfig.js'  // Importamos la config global
 
 let handler = async (m, { conn, args }) => {
 if (!args[0]) return m.reply('❌ Debés escribir el nombre de tu Pokémon inicial.\nEjemplo: *.elegir charmander*')
 
-let usuarios = JSON.parse(fs.readFileSync(path))
+let usuarios = JSON.parse(fs.readFileSync(pathUsuarios))
 if (!usuarios[m.sender]) return m.reply('❌ Primero debés crear un perfil con *.iniciar*')
 
 if (usuarios[m.sender].inicialElegido) return m.reply('⚠️ Ya elegiste tu Pokémon inicial.')
@@ -26,7 +21,7 @@ if (!elegido) return m.reply('❌ Ese Pokémon no es válido. Elegí entre Charm
 usuarios[m.sender].equipo.push(elegido)
 usuarios[m.sender].inicialElegido = true
 
-fs.writeFileSync(path, JSON.stringify(usuarios, null, 2))
+fs.writeFileSync(pathUsuarios, JSON.stringify(usuarios, null, 2))
 await m.reply(`🎉 ¡Felicidades! Has elegido a ${elegido.nombre} como tu Pokémon inicial.\n¡Que comience tu aventura!`)
 }
 
